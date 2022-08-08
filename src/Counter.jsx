@@ -23,7 +23,8 @@ function Counter(props) {
                 <Button variant="contained" onClick={decrement}>-</Button>
             </div>
             <Link to='/Counter2'>Counter2</Link><br/>
-            <Link to='/'>Home</Link>
+            <Link to='/'>Home</Link><br/>
+            <img src='/panda.jpg' height={200} width={"auto"}/>
         </div>
     );
 };

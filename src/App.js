@@ -1,5 +1,6 @@
 import React, { lazy, Suspense } from "react";
 import "./App.css";
+import "./App copy.css";
 import { Routes, Route, Link, Outlet } from "react-router-dom";
 const Counter = lazy(()=>import('./Counter'))
 const Counter2 = lazy(()=>import('./Counter2'))
