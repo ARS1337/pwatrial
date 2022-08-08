@@ -19,7 +19,12 @@ const isLocalhost = Boolean(
 );
 
 export function register(config) {
+  // window.alert("register start")
+  console.log(navigator)
+  // alert(`process.env.NODE_ENV === 'production' ${process.env.NODE_ENV === 'production'} `)
+  // alert( `serviceWorker' in navigator : ${'serviceWorker' in navigator}`)
   if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+  // window.alert("register if")
     // The URL constructor is available in all browsers that support SW.
     const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
     if (publicUrl.origin !== window.location.origin) {
@@ -28,6 +33,12 @@ export function register(config) {
       // serve assets; see https://github.com/facebook/create-react-app/issues/2374
       return;
     }
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+      // Prevent the mini-infobar from appearing on mobile.
+      event.preventDefault();
+      window.alert( 'beforeinstallprompt');
+    });
 
     window.addEventListener('load', () => {
       const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
