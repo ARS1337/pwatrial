@@ -16,7 +16,7 @@ function Counter(props) {
 
     return(
         <div style={{textAlign: 'center'}}>
-            <h3>Counter App</h3>
+            <h3>Counter App1</h3>
             <div>
                 <Button variant="contained" onClick={increment}>+</Button>
                 <span> {count} </span>
