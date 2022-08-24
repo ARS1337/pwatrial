@@ -10,8 +10,9 @@
 import { clientsClaim } from "workbox-core";
 import { ExpirationPlugin } from "workbox-expiration";
 import { precacheAndRoute, createHandlerBoundToURL } from "workbox-precaching";
-import { registerRoute } from "workbox-routing";
-import { StaleWhileRevalidate,CacheFirst } from "workbox-strategies";
+import { registerRoute,setCatchHandler  } from "workbox-routing";
+import { StaleWhileRevalidate, CacheFirst } from "workbox-strategies";
+import { BroadcastUpdatePlugin } from "workbox-broadcast-update";
 
 clientsClaim();
 
@@ -52,7 +53,7 @@ registerRoute(
   // Add in any other file extensions or routing criteria as needed.
   ({ url }) => {
     let isOriginSame = url.origin === self.location.origin;
-    let cacheAllImages = ["png", "jpg", "jpeg", "bmp", "gif",'ico','icon'];
+    let cacheAllImages = ["png", "jpg", "jpeg", "bmp", "gif", "ico", "icon"];
     console.log("url", url);
     let valid = cacheAllImages.map((ext) => {
       if (url.pathname.endsWith(ext)) {
@@ -61,22 +62,48 @@ registerRoute(
     });
     return isOriginSame && valid.includes(true);
   }, // Customize this strategy as needed, e.g., by changing to CacheFirst.
-  new CacheFirst({
+  new StaleWhileRevalidate({
     cacheName: "images",
     plugins: [
       // Ensure that once this runtime cache reaches a maximum size the
       // least-recently used images are removed.
       new ExpirationPlugin({ maxEntries: 50 }),
+      new BroadcastUpdatePlugin(),
     ],
   })
 );
 
 // This allows the web app to trigger skipWaiting via
 // registration.waiting.postMessage({type: 'SKIP_WAITING'})
-self.addEventListener("message", (event) => {
+self.addEventListener("message", async (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
     self.skipWaiting();
   }
 });
-
 // Any other custom service worker logic can go here.
+self.addEventListener('install', event => {
+  const files = ['/offline.html']; // you can add more resources here
+  event.waitUntil(
+    self.caches.open('offline-fallbacks')
+        .then(cache => cache.addAll(files))
+  );
+});
+
+// Respond with the fallback if a route throws an error
+setCatchHandler(async (options) => {
+  const destination = options.request.destination;
+  const cache = await self.caches.open('offline-fallbacks');
+  if (destination === 'document') {
+    return (await cache.match('/offline.html')) || Response.error();
+  }
+  return Response.error();
+});
+
+// async function registerPeriodicSync() {
+//   await registration.periodicSync.register('get-daily-news', {
+//       minInterval: 24 * 60 * 60 * 1000
+//   });
+// }
+self.addEventListener("fetch", event => {
+  console.log(`URL requested: ${event.request.url}`);
+});

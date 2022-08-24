@@ -19,6 +19,7 @@ const isLocalhost = Boolean(
 );
 
 export function register(config) {
+  
   // window.alert("register start")
   console.log(navigator)
   // alert(`process.env.NODE_ENV === 'production' ${process.env.NODE_ENV === 'production'} `)

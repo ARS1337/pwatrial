@@ -23,6 +23,7 @@ function Counter(props) {
                 <Button variant="contained" onClick={decrement}>-</Button>
             </div>
             <Link to='/Counter'>Counter</Link><br/>
+            <Link to='/Counter3'>Counter</Link><br/>
             <Link to='/'>Home</Link>
         </div>
     );
