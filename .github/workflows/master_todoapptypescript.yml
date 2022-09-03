@@ -27,6 +27,9 @@ jobs:
           npm run build --if-present
         env:
             CI: false
+            
+      - name: Zip artifact for deployment
+        run: powershell Compress-Archive . release.zip    
       
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
@@ -46,6 +49,9 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: node-app
+          
+      - name: unzip artifact for deployment
+        run: powershell Expand-Archive release.zip
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
